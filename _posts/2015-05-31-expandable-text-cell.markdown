@@ -2,32 +2,31 @@
 layout:     post
 title:      Implementing an Expandable Text Cell
 date:       2014-06-11 15:31:19
-summary:    Learn how to implement an expandable text cell which automatically cuts off the text at a specified number of lines; just like in the reviews section of the Apple Store!
+summary:    Learn how to implement an expandable text cell which automatically cuts off the text at a specified number of lines; just like in the reviews section of the App Store!
 categories: blog
 ---
 
-Learn how to implement an expandable text cell which automatically cuts off the text at a specified number of lines; just like in the reviews section of the Apple Store!
+Learn how to implement an expandable text cell which automatically cuts off the text at a specified number of lines; just like in the reviews section of the App Store!
 
 <center>![]({{ site.url }}images/blog-expandablecell/ExpandableCellAnimation.gif)</center>
 
 ## Code
 I've posted the full code for this blog post on GitHub: 
-[http://www.github.com/kgaidis/blog-expandingcell](http://www.github.com/kgaidis/blog-expandingcell)
+<br><a href="https://github.com/kgaidis/blog-expandable-text-cell" target="_blank"> https://github.com/kgaidis/blog-expandable-text-cell </a>
 
 ## Project Classes
 
-
 #### ExpandableLabelTableViewCell
-A simple cell that doesn't do much else other than give us an outlet to an `ExpandableLabel`, which is just a subclass of `UILabel`.
+A simple `UITableViewCell` that gives us an outlet to an `ExpandableLabel`, which is just a subclass of `UILabel`.
 
 #### ExpandableLabelCellModel
-An `NSObject` that contains information on how each cell will be presented. First we have `NSString *string`, which contains the text that will go inside the label. Then we have `BOOL expanded`, which is used to track whether the cell has been expanded already. This is a very important class because it controls how many lines the cell will display via `kMaxNumberOfLines`.
+An `NSObject` that contains information on how each cell will be presented. First we have `NSString *string`, which contains the text that will go inside the label. Then we have `BOOL expanded`, which is used to track whether the cell has been expanded already. This is a very important class because it controls how many lines of text the cell will display via `kMaxNumberOfLines`.
 
 #### ViewController
-The view controller is pretty standard. We populate the cell models with random sized strings, implement `UITableViewDelegate` / `UITableViewDataSource`, and just display the cells! Most of the actual logic is handled by `ExpandableLabelCellModel` and `ExpandableLabel`.
+The view controller is pretty standard. We populate the cell models with random-sized strings, implement `UITableViewDelegate` / `UITableViewDataSource`, and just display the cells. Most of the logic is handled by `ExpandableLabelCellModel` and `ExpandableLabel`.
 
 #### ExpandableLabel
-The most important part of the project and why you came to see this blog post! We will talk about how this is implemented step-by-step below, but I'll summarize the most important parts here. First we must decide whether we need to truncate the cell, if we decide to truncate, we append *"...More"* to the cut off text. Truncation is decided by the labels `numberOfLines` property. If the value is `0` it means that we do not want to truncate the label. If the value `>0` we must calculate whether the `text` of the `UILabel` fits the `numberOfLines`. If the text fits, we want to leave it alone and display it in its full form, otherwise we truncate it. 
+The most important part of the project and why you came to see this blog post! This special `UILabel` subclass handles all of the truncation. We will talk about how `ExpandableLabel` is implemented step-by-step below, but I'll summarize the most important parts here. First we must decide whether we need to truncate the text in the cell, if we decide to truncate, we append *"...More"* to the truncated text. Truncation is decided by the labels `numberOfLines` property. If the value is `0`, it means that we do not want to truncate the text. If the value `>0`, we must calculate whether the `text` of the `UILabel` fits the `numberOfLines`. If the text fits, we want to leave it alone and display it in its full form, otherwise, we truncate it. 
 
 
 ## ExpandableLabel Functionality
@@ -72,10 +71,10 @@ static NSString *const kExpandableLabelText = @"More";
 {% endhighlight %}
 
 #### When to truncate?
-The project calls `truncate` in `layoutSubviews`. Whether this is the right place to call it can be arguable, but there is one **very important** thing to keep in mind: the calculations are done based off the `UILabel` bounds, so make sure they are correct before calling the truncate function!
+The project calls `truncate` in `layoutSubviews`. Whether this is the right place to call the function can be arguable, but there is one **very important** thing to keep in mind: the calculations are done based off the `UILabel` bounds, so make sure they are correct before calling the truncate function!
 
 #### Should we be truncating?
-As stated above, truncation is decided by the labels `numberOfLines` property. If the value is `0`, it means that we do not want to truncate the label. If the value `>0`, we must calculate whether the `text` of the `UILabel` fits the `numberOfLines`. First we calculate the `actualHeightOfText`: the height of the `UILabel` if we were to display <u>every</u> line of text. Then we calculate the `desiredHeightOfText`: the height of the `UILabel` with respect to the value of `numberOfLines`. If `desiredHeightOfText < actualHeightOfText` we want to truncate!
+As stated above, truncation is decided by the labels `numberOfLines` property. If the value is `0`, it means that we do not want to truncate the text. If the value `>0`, we must calculate whether the `text` of the `UILabel` fits the `numberOfLines`. First we calculate the `actualHeightOfText`: the height of the `UILabel` if we were to display <u>every</u> line of text. Then we calculate the `desiredHeightOfText`: the height of the `UILabel` with respect to the value of `numberOfLines`. If `desiredHeightOfText < actualHeightOfText` we want to truncate!
 
 {% highlight objective-c %}
 - (BOOL)shouldTruncate {
@@ -98,7 +97,7 @@ As stated above, truncation is decided by the labels `numberOfLines` property. I
 {% endhighlight %}
 
 #### How many characters fit a rectangle? 
-The most important function in the whole project! Apple's **Core Text** library provides `CTFramesetterSuggestFrameSizeWithConstraints` function. We can pass a `CFRange` to it called the `fitRange` (*"On return, contains the range of the string that actually fit in the constrained size."*). By passing in the <u>desired</u> rectangle of the `UILabel` and by taking the `length` from the `fitRange`, we get the number of characters that fit our desired label!
+The most important function in the whole project! Apple's **Core Text** library provides `CTFramesetterSuggestFrameSizeWithConstraints` function. We can pass a `CFRange` called the `fitRange` (*"On return, contains the range of the string that actually fit in the constrained size."*) to the function. By passing in the <u>desired</u> rectangle of the `UILabel` and by taking the `length` from the `fitRange`, we get the number of characters that fit our desired label!
 
 {% highlight objective-c %}
 - (NSInteger)numberOfCharactersThatFitLabel {
@@ -121,4 +120,4 @@ The most important function in the whole project! Apple's **Core Text** library 
 
 ## Conclusion
 
-And that's it! Keep in mind that this functionality can be applied to many different UX cases. For example, Facebook's *"... Continue Reading"* button.
+And that's it! Keep in mind that this functionality can be applied to many different UX cases. For example, Facebook's *"... Continue Reading"* button, which pushes to a new view controller upon the press of the button.
