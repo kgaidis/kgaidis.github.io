@@ -4,7 +4,7 @@ title: Hello.
 ---
 
 
-My name is Krisjanis Gaidis. I'm an iOS engineer based in New York City.
+My name is Krisjanis Gaidis and I was born in Latvia. I'm an iOS engineer based in New York City.
 
 ### Apps.
 
