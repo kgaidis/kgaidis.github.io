@@ -1,3 +1,17 @@
+# My Quick Guide
+
+
+To develop:`jekyll serve --watch` 
+(Note: you will need various ruby gems. So you might have to get their repo to get all the gems necessary.)
+
+You can change CSS in: `_sass/_variables.scss`
+
+To build for AWS S3:`jekyll build` 
+
+Then take all the files under `_site` and move them into S3 bucket. Use Chrome to drag-and-drop files.
+
+
+
 # Pixyll
 
 [pixyll.com](http://www.pixyll.com)
