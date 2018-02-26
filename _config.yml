@@ -4,7 +4,7 @@ email:       kgaidis@gmail.com
 author:      Krisjanis Gaidis
 description: "Personal Website"
 baseurl:     ""
-url:         "/"
+url:         "http://www.krisjanisgaidis.com"
 date_format: "%b %-d, %Y"
 header_pages:
  - index.md
